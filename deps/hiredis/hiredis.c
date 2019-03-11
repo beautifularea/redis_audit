@@ -721,6 +721,7 @@ int redisReconnect(redisContext *c) {
 /* Connect to a Redis instance. On error the field error in the returned
  * context will be set to the return value of the error function.
  * When no set of reply functions is given, the default set will be used. */
+//连接方法
 redisContext *redisConnect(const char *ip, int port) {
     redisContext *c;
 

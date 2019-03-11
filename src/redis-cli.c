@@ -755,6 +755,7 @@ static int cliSelect(void) {
  *      CC_FORCE: The connection is performed even if there is already
  *                a connected socket.
  *      CC_QUIET: Don't print errors if connection fails. */
+//client的连接函数
 static int cliConnect(int flags) {
     if (context == NULL || flags & CC_FORCE) {
         if (context != NULL) {
@@ -767,6 +768,7 @@ static int cliConnect(int flags) {
             context = redisConnectUnix(config.hostsocket);
         }
 
+        //创建连接错误处理
         if (context->err) {
             if (!(flags & CC_QUIET)) {
                 fprintf(stderr,"Could not connect to Redis at ");
@@ -786,6 +788,7 @@ static int cliConnect(int flags) {
          * in order to prevent timeouts caused by the execution of long
          * commands. At the same time this improves the detection of real
          * errors. */
+        //设置心跳, REDIS_CLI_KEEPALIVE_INTERVAL == 15s
         anetKeepAlive(NULL, context->fd, REDIS_CLI_KEEPALIVE_INTERVAL);
 
         /* Do AUTH and select the right DB. */
@@ -794,6 +797,7 @@ static int cliConnect(int flags) {
         if (cliSelect() != REDIS_OK)
             return REDIS_ERR;
     }
+
     return REDIS_OK;
 }
 

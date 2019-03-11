@@ -2616,8 +2616,7 @@ int listenToPort(int port, int *fds, int *count) {
 
             if (*count == 1 || unsupported) {
                 /* Bind the IPv4 address as well. */
-                fds[*count] = anetTcpServer(server.neterr,port,NULL,
-                    server.tcp_backlog);
+                fds[*count] = anetTcpServer(server.neterr,port,NULL, server.tcp_backlog);
                 if (fds[*count] != ANET_ERR) {
                     anetNonBlock(NULL,fds[*count]);
                     (*count)++;

@@ -437,6 +437,7 @@ int anetWrite(int fd, char *buf, int count)
     return totlen;
 }
 
+//listen函数的封装
 static int anetListen(char *err, int s, struct sockaddr *sa, socklen_t len, int backlog) {
     if (bind(s,sa,len) == -1) {
         anetSetError(err, "bind: %s", strerror(errno));
@@ -462,6 +463,9 @@ static int anetV6Only(char *err, int s) {
     return ANET_OK;
 }
 
+/*
+封装了socket, listen方法。
+*/
 static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backlog)
 {
     int s = -1, rv;
@@ -470,6 +474,8 @@ static int _anetTcpServer(char *err, int port, char *bindaddr, int af, int backl
 
     snprintf(_port,6,"%d",port);
     memset(&hints,0,sizeof(hints));
+
+    //设置server 配置
     hints.ai_family = af;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;    /* No effect if bindaddr != NULL */

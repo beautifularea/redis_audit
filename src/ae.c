@@ -65,9 +65,12 @@ aeEventLoop *aeCreateEventLoop(int setsize) {
     int i;
 
     if ((eventLoop = zmalloc(sizeof(*eventLoop))) == NULL) goto err;
+
     eventLoop->events = zmalloc(sizeof(aeFileEvent)*setsize);
     eventLoop->fired = zmalloc(sizeof(aeFiredEvent)*setsize);
+
     if (eventLoop->events == NULL || eventLoop->fired == NULL) goto err;
+
     eventLoop->setsize = setsize;
     eventLoop->lastTime = time(NULL);
     eventLoop->timeEventHead = NULL;
@@ -76,11 +79,14 @@ aeEventLoop *aeCreateEventLoop(int setsize) {
     eventLoop->maxfd = -1;
     eventLoop->beforesleep = NULL;
     eventLoop->aftersleep = NULL;
+
     if (aeApiCreate(eventLoop) == -1) goto err;
     /* Events with mask == AE_NONE are not set. So let's initialize the
      * vector with it. */
+
     for (i = 0; i < setsize; i++)
         eventLoop->events[i].mask = AE_NONE;
+
     return eventLoop;
 
 err:
