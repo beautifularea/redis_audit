@@ -2693,6 +2693,8 @@ void resetServerStats(void) {
 }
 
 void initServer(void) {
+    printf("initServer初始化服务器。\n");
+
     int j;
 
     //SIGHUP ，SIGPIPE，SIGURG 三个重要的信号。
@@ -2925,6 +2927,8 @@ int populateCommandTableParseFlags(struct redisCommand *c, char *strflags) {
 /* Populates the Redis Command Table starting from the hard coded list
  * we have on top of redis.c file. */
 void populateCommandTable(void) {
+    printf("准备解析 command.\n");
+
     int j;
     int numcommands = sizeof(redisCommandTable)/sizeof(struct redisCommand);
 
@@ -3138,6 +3142,8 @@ void preventCommandReplication(client *c) {
  *
  */
 void call(client *c, int flags) {
+    printf("call a client command.\n");
+
     long long dirty, start, duration;
     int client_old_flags = c->flags;
     struct redisCommand *real_cmd = c->cmd;
@@ -3267,6 +3273,8 @@ void call(client *c, int flags) {
  * other operations can be performed by the caller. Otherwise
  * if C_ERR is returned the client was destroyed (i.e. after QUIT). */
 int processCommand(client *c) {
+    printf("进入到processCommand方法，解析从client传递的command.\n");
+
     /* The QUIT command is handled separately. Normal command procs will
      * go through checking for replication and QUIT will cause trouble
      * when FORCE_REPLICATION is enabled and would be implemented in
@@ -4396,6 +4404,7 @@ void createPidFile(void) {
 }
 
 void daemonize(void) {
+    printf("daemonize一下.\n");
     int fd;
 
     if (fork() != 0) exit(0); /* parent exits */

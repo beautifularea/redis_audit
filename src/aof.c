@@ -242,6 +242,8 @@ void stopAppendOnly(void) {
 /* Called when the user switches from "appendonly no" to "appendonly yes"
  * at runtime using the CONFIG command. */
 int startAppendOnly(void) {
+    printf("进入到startAppendOnly\n");
+
     char cwd[MAXPATHLEN]; /* Current working dir path for error messages. */
     int newfd;
 
@@ -1534,6 +1536,8 @@ void aofClosePipes(void) {
  *    The the new file is reopened as the new append only file. Profit!
  */
 int rewriteAppendOnlyFileBackground(void) {
+    printf("进入到rewriteAppendOnlyFileBackground方法。\n");
+
     pid_t childpid;
     long long start;
 
@@ -1594,6 +1598,8 @@ int rewriteAppendOnlyFileBackground(void) {
 }
 
 void bgrewriteaofCommand(client *c) {
+    printf("进入bgrewriteaofCommand方法。\n");
+
     if (server.aof_child_pid != -1) {
         addReplyError(c,"Background append only file rewriting already in progress");
     } else if (server.rdb_child_pid != -1) {

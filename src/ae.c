@@ -140,10 +140,10 @@ void aeStop(aeEventLoop *eventLoop) {
 }
 
 //创建fileevent
-int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,
-        aeFileProc *proc, void *clientData)
+//初始化服务器的时候，把commandtable中的所有命令，注册到client的fd中，proc 为注册的command.
+int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask, aeFileProc *proc, void *clientData)
 {
-    printf("创建file event."\n);
+    printf("创建file event.\n");
 
     if (fd >= eventLoop->setsize) {
         errno = ERANGE;

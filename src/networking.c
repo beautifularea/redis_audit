@@ -83,6 +83,8 @@ void linkClient(client *c) {
 }
 
 client *createClient(int fd) {
+    printf("进入createClient方法。\n");
+
     client *c = zmalloc(sizeof(client));
 
     /* passing -1 as fd it is possible to create a non connected client.
@@ -94,12 +96,17 @@ client *createClient(int fd) {
         anetEnableTcpNoDelay(NULL,fd);
         if (server.tcpkeepalive)
             anetKeepAlive(NULL,fd,server.tcpkeepalive);
-        if (aeCreateFileEvent(server.el,fd,AE_READABLE,
-            readQueryFromClient, c) == AE_ERR)
+
+        if (aeCreateFileEvent(server.el,fd,AE_READABLE, readQueryFromClient, c) == AE_ERR)
         {
+
             close(fd);
             zfree(c);
             return NULL;
+        }
+        else
+        {
+            printf("注册client命令fd成功.\n");
         }
     }
 
@@ -1172,6 +1179,8 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
  * need to use a syscall in order to install the writable event handler,
  * get it called, and so forth. */
 int handleClientsWithPendingWrites(void) {
+    //printf("进入handleClientsWithPendingWrites.\n");
+
     listIter li;
     listNode *ln;
     int processed = listLength(server.clients_pending_write);
@@ -1513,7 +1522,9 @@ int processMultibulkBuffer(client *c) {
  * more query buffer to process, because we read more data from the socket
  * or because a client was blocked and later reactivated, so there could be
  * pending query buffer, already representing a full command, to process. */
+//循环调用。。。
 void processInputBuffer(client *c) {
+    
     server.current_client = c;
 
     /* Keep processing while there is something in the input buffer */
@@ -1619,6 +1630,8 @@ void processInputBufferAndReplicate(client *c) {
 }
 
 void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
+    printf("readQueryFromClient...\n");
+
     client *c = (client*) privdata;
     int nread, readlen;
     size_t qblen;
