@@ -1622,6 +1622,7 @@ void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
     }
 
     /* Send a PING to check the master is able to reply without errors. */
+    //发送ping 命令
     if (server.repl_state == REPL_STATE_CONNECTING) {
         serverLog(LL_NOTICE,"Non blocking connect for SYNC fired the event.");
         /* Delete the writable event so that the readable event remains
@@ -1636,6 +1637,7 @@ void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
     }
 
     /* Receive the PONG command. */
+    //收到pong命令
     if (server.repl_state == REPL_STATE_RECEIVE_PONG) {
         err = sendSynchronousCommand(SYNC_CMD_READ,fd,NULL);
 
@@ -1753,6 +1755,7 @@ void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
      * PSYNC2: supports PSYNC v2, so understands +CONTINUE <new repl ID>.
      *
      * The master will ignore capabilities it does not understand. */
+    //// 复制状态为发送capa，通知主节点从节点的能力
     if (server.repl_state == REPL_STATE_SEND_CAPA) {
         err = sendSynchronousCommand(SYNC_CMD_WRITE,fd,"REPLCONF",
                 "capa","eof","capa","psync2",NULL);
@@ -1780,7 +1783,9 @@ void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
      * to start a full resynchronization so that we get the master run id
      * and the global offset, to try a partial resync at the next
      * reconnection attempt. */
+     //从节点发送PSYNC命令给主节点，尝试进行同步主节点的数据集
     if (server.repl_state == REPL_STATE_SEND_PSYNC) {
+        //// 向主节点发送一个部分重同步命令PSYNC
         if (slaveTryPartialResynchronization(fd,0) == PSYNC_WRITE_ERROR) {
             err = sdsnew("Write error sending the PSYNC command.");
             goto write_error;
@@ -1882,14 +1887,15 @@ write_error: /* Handle sendSynchronousCommand(SYNC_CMD_WRITE) errors. */
 int connectWithMaster(void) {
     int fd;
 
-    fd = anetTcpNonBlockBestEffortBindConnect(NULL,
-        server.masterhost,server.masterport,NET_FIRST_BIND_ADDR);
+    //non-block方式连接主节点
+    fd = anetTcpNonBlockBestEffortBindConnect(NULL, server.masterhost,server.masterport,NET_FIRST_BIND_ADDR);
     if (fd == -1) {
         serverLog(LL_WARNING,"Unable to connect to MASTER: %s",
             strerror(errno));
         return C_ERR;
     }
 
+    //// 监听主节点fd的可读和可写事件的发生，并设置其回调函数为syncWithMaster
     if (aeCreateFileEvent(server.el,fd,AE_READABLE|AE_WRITABLE,syncWithMaster,NULL) ==
             AE_ERR)
     {
@@ -1957,6 +1963,8 @@ void replicationSetMaster(char *ip, int port) {
     sdsfree(server.masterhost);
     server.masterhost = sdsnew(ip);
     server.masterport = port;
+
+    // 例如服务器1是服务器2的主节点，现在服务器2要同步服务器3，服务器3要成为服务器2的主节点，因此要释放服务器1
     if (server.master) {
         freeClient(server.master);
     }
@@ -2016,9 +2024,11 @@ void replicationHandleMasterDisconnection(void) {
      * the slaves only if we'll have to do a full resync with our master. */
 }
 
+//从节点执行slaveof命令，建立主从关系。
 void replicaofCommand(client *c) {
     /* SLAVEOF is not allowed in cluster mode as replication is automatically
      * configured using the current address of the master node. */
+    //cluster状态不能进行复制
     if (server.cluster_enabled) {
         addReplyError(c,"REPLICAOF not allowed in cluster mode.");
         return;
@@ -2065,6 +2075,8 @@ void replicaofCommand(client *c) {
             server.masterhost, server.masterport, client);
         sdsfree(client);
     }
+
+    //回复
     addReply(c,shared.ok);
 }
 
@@ -2533,6 +2545,8 @@ long long replicationGetSlaveOffset(void) {
 /* --------------------------- REPLICATION CRON  ---------------------------- */
 
 /* Replication cron function, called 1 time per second. */
+//周期性复制函数
+//主从关系建立后，从节点服务器的server.repl_state被设置为REPL_STATE_CONNECT
 void replicationCron(void) {
     static long long replication_cron_loops = 0;
 
@@ -2564,9 +2578,8 @@ void replicationCron(void) {
 
     /* Check if we should connect to a MASTER */
     if (server.repl_state == REPL_STATE_CONNECT) {
-        serverLog(LL_NOTICE,"Connecting to MASTER %s:%d",
-            server.masterhost, server.masterport);
-        if (connectWithMaster() == C_OK) {
+        serverLog(LL_NOTICE,"Connecting to MASTER %s:%d", server.masterhost, server.masterport);
+        if (connectWithMaster() == C_OK) { //如果连接正常，开始复制操作 
             serverLog(LL_NOTICE,"MASTER <-> REPLICA sync started");
         }
     }
