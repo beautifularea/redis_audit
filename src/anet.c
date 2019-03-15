@@ -92,6 +92,7 @@ int anetBlock(char *err, int fd) {
 /* Set TCP keep alive option to detect dead peers. The interval option
  * is only used for Linux as we are using Linux-specific APIs to set
  * the probe send time, interval, and count. */
+//设置SO_KEEPALIVE选项
 int anetKeepAlive(char *err, int fd, int interval)
 {
     int val = 1;
@@ -365,8 +366,7 @@ int anetTcpNonBlockBindConnect(char *err, char *addr, int port,
 int anetTcpNonBlockBestEffortBindConnect(char *err, char *addr, int port,
                                          char *source_addr)
 {
-    return anetTcpGenericConnect(err,addr,port,source_addr,
-            ANET_CONNECT_NONBLOCK|ANET_CONNECT_BE_BINDING);
+    return anetTcpGenericConnect(err,addr,port,source_addr, ANET_CONNECT_NONBLOCK|ANET_CONNECT_BE_BINDING);
 }
 
 int anetUnixGenericConnect(char *err, char *path, int flags)

@@ -95,7 +95,10 @@ client *createClient(int fd) {
         anetNonBlock(NULL,fd);
         anetEnableTcpNoDelay(NULL,fd);
         if (server.tcpkeepalive)
+        {
+            printf("设置tcpkeepalive...\n");
             anetKeepAlive(NULL,fd,server.tcpkeepalive);
+        }
 
         if (aeCreateFileEvent(server.el,fd,AE_READABLE, readQueryFromClient, c) == AE_ERR)
         {
