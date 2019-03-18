@@ -1601,6 +1601,7 @@ int slaveTryPartialResynchronization(int fd, int read_reply) {
 /* This handler fires when the non blocking connect was able to
  * establish a connection with the master. */
 //non-blocking 建立后，触发该方法.
+//make && ./redis-server ../redis.conf 方式读取配置文件启动
 void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
     char tmpfile[256], *err = NULL;
     int dfd = -1, maxtries = 5;
