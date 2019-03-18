@@ -537,6 +537,10 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
 static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *len) {
     int fd;
     while(1) {
+        //accept说明：
+        //在非阻塞状态下，accept返回-1，
+        //如果进程在一个慢系统调用(slow system call)中阻塞时，当捕获到某个信号且相应信号处理函数返回时，这个系统调用被中断，调用返回错误，设置errno为EINTR（相应的错误描述为“Interrupted system call”）。
+        //
         fd = accept(s,sa,len);
         if (fd == -1) {
             if (errno == EINTR)
