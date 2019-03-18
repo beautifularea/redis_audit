@@ -421,7 +421,7 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
         /* Call the multiplexing API, will return only on timeout or when
          * some event fires. */
         numevents = aeApiPoll(eventLoop, tvp);
-        printf("---得到收到的事件个数 : %d\n", numevents);
+        //printf("---得到收到的事件个数 : %d\n", numevents);
 
         /* After sleep callback. */
         if (eventLoop->aftersleep != NULL && flags & AE_CALL_AFTER_SLEEP)

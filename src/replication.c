@@ -1653,6 +1653,8 @@ void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
     //收到master发来的pong命令
     if (server.repl_state == REPL_STATE_RECEIVE_PONG) {
 
+        serverLog(LL_NOTICE, "收到pong");
+
         //从master读取pong消息
         err = sendSynchronousCommand(SYNC_CMD_READ,fd,NULL);
 
