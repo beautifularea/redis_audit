@@ -1602,6 +1602,7 @@ int slaveTryPartialResynchronization(int fd, int read_reply) {
  * establish a connection with the master. */
 //non-blocking 建立后，触发该方法.
 //make && ./redis-server ../redis.conf 方式读取配置文件启动
+//配置slaveof 1) 在redis.conf中修改 2）./redis-cli 进入交互模式， slaveof ip port方式
 void syncWithMaster(aeEventLoop *el, int fd, void *privdata, int mask) {
     char tmpfile[256], *err = NULL;
     int dfd = -1, maxtries = 5;
