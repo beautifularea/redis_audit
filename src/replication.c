@@ -1928,10 +1928,11 @@ write_error: /* Handle sendSynchronousCommand(SYNC_CMD_WRITE) errors. */
     goto error;
 }
 
+//连接服务器...
 int connectWithMaster(void) {
     int fd;
 
-    //non-block方式连接主节点
+    //设置non-block方式连接主节点
     fd = anetTcpNonBlockBestEffortBindConnect(NULL, server.masterhost,server.masterport,NET_FIRST_BIND_ADDR);
     if (fd == -1) {
         serverLog(LL_WARNING,"Unable to connect to MASTER: %s",
@@ -1939,7 +1940,7 @@ int connectWithMaster(void) {
         return C_ERR;
     }
 
-    //// 监听主节点fd的可读和可写事件的发生，并设置其回调函数为syncWithMaster, 同时调用.
+    // 监听主节点fd的可读和可写事件的发生，并设置其回调函数为syncWithMaster, 同时调用.
     if (aeCreateFileEvent(server.el,fd,AE_READABLE|AE_WRITABLE,syncWithMaster,NULL) == AE_ERR)
     {
         close(fd);
@@ -2641,10 +2642,10 @@ void replicationCron(void) {
 
         if (connectWithMaster() == C_OK) { //如果连接正常，开始复制操作 
             serverLog(LL_NOTICE,"MASTER <-> REPLICA sync started");
+            serverLog(LL_NOTICE, "master<---->client网络建立成功, 进入复制阶段.");
         }
     }
 
-    serverLog(LL_NOTICE, "master<---->client网络建立成功。");
 
     /* Send ACK to master from time to time.
      * Note that we do not send periodic acks to masters that don't
