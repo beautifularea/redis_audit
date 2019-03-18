@@ -174,10 +174,16 @@ void getCommand(client *c) {
 }
 
 void getsetCommand(client *c) {
+    printf("get set command方法实现。\n");
+
     if (getGenericCommand(c) == C_ERR) return;
+
     c->argv[2] = tryObjectEncoding(c->argv[2]);
+
     setKey(c->db,c->argv[1],c->argv[2]);
+
     notifyKeyspaceEvent(NOTIFY_STRING,"set",c->argv[1],c->db->id);
+
     server.dirty++;
 }
 

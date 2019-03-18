@@ -1082,13 +1082,14 @@ void replicationCreateMasterClient(int fd, int dbid) {
     server.master->reploff = server.master_initial_offset;
     server.master->read_reploff = server.master->reploff;
     server.master->user = NULL; /* This client can do everything. */
-    memcpy(server.master->replid, server.master_replid,
-        sizeof(server.master_replid));
+    memcpy(server.master->replid, server.master_replid, sizeof(server.master_replid));
     /* If master offset is set to -1, this master is old and is not
      * PSYNC capable, so we flag it accordingly. */
     if (server.master->reploff == -1)
         server.master->flags |= CLIENT_PRE_PSYNC;
-    if (dbid != -1) selectDb(server.master,dbid);
+
+    if (dbid != -1) 
+        selectDb(server.master,dbid);
 }
 
 void restartAOF() {
@@ -1281,6 +1282,7 @@ void readSyncBulkPayload(aeEventLoop *el, int fd, void *privdata, int mask) {
         aeDeleteFileEvent(server.el,server.repl_transfer_s,AE_READABLE);
         serverLog(LL_NOTICE, "MASTER <-> REPLICA sync: Loading DB in memory");
         rdbSaveInfo rsi = RDB_SAVE_INFO_INIT;
+        serverLog(LL_NOTICE, "rdb_filename : %s", server.rdb_filename);
         if (rdbLoad(server.rdb_filename,&rsi) != C_OK) {
             serverLog(LL_WARNING,"Failed trying to load the MASTER synchronization DB from disk");
             cancelReplicationHandshake();

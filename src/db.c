@@ -377,9 +377,13 @@ long long emptyDb(int dbnum, int flags, void(callback)(void*)) {
 }
 
 int selectDb(client *c, int id) {
+    printf("select db id : %d\n", id);
+
     if (id < 0 || id >= server.dbnum)
         return C_ERR;
+
     c->db = &server.db[id];
+
     return C_OK;
 }
 

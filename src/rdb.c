@@ -1217,6 +1217,8 @@ werr: /* Write error. */
 
 /* Save the DB on disk. Return C_ERR on error, C_OK on success. */
 int rdbSave(char *filename, rdbSaveInfo *rsi) {
+    serverLog(LL_NOTICE, "save the db %s on disk.\n", filename);
+
     char tmpfile[256];
     char cwd[MAXPATHLEN]; /* Current working dir path for error messages. */
     FILE *fp;
@@ -2084,16 +2086,24 @@ eoferr: /* unexpected end of file is handled here with a fatal exit */
  * If you pass an 'rsi' structure initialied with RDB_SAVE_OPTION_INIT, the
  * loading code will fiil the information fields in the structure. */
 int rdbLoad(char *filename, rdbSaveInfo *rsi) {
+    serverLog(LL_NOTICE, "rdbLoad方法.");
+
     FILE *fp;
     rio rdb;
     int retval;
 
     if ((fp = fopen(filename,"r")) == NULL) return C_ERR;
+
     startLoading(fp);
+
     rioInitWithFile(&rdb,fp);
+
     retval = rdbLoadRio(&rdb,rsi,0);
+
     fclose(fp);
+
     stopLoading();
+
     return retval;
 }
 
