@@ -109,7 +109,7 @@ client *createClient(int fd) {
         }
         else
         {
-            printf("注册client命令fd成功.\n");
+            printf("创建client的时候，顺便注册[client命令集]到fd成功.\n");
         }
     }
 
@@ -774,6 +774,8 @@ int clientHasPendingReplies(client *c) {
 
 #define MAX_ACCEPTS_PER_CALL 1000
 static void acceptCommonHandler(int fd, int flags, char *ip) {
+    printf("进入acceptCommandHandler方法。\n");
+
     client *c;
     if ((c = createClient(fd)) == NULL) {
         serverLog(LL_WARNING,
@@ -844,6 +846,8 @@ static void acceptCommonHandler(int fd, int flags, char *ip) {
 }
 
 void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
+    printf("进入到acceptTcpHandler方法.\n");
+
     int cport, cfd, max = MAX_ACCEPTS_PER_CALL;
     char cip[NET_IP_STR_LEN];
     UNUSED(el);

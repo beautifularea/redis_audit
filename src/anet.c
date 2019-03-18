@@ -552,6 +552,8 @@ static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *l
 }
 
 int anetTcpAccept(char *err, int s, char *ip, size_t ip_len, int *port) {
+    printf("进入到anetTcpAccept方法。\n");
+
     int fd;
     struct sockaddr_storage sa;
     socklen_t salen = sizeof(sa);

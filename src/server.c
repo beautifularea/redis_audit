@@ -2814,6 +2814,7 @@ void initServer(void) {
 
     /* Create an event handler for accepting new connections in TCP and Unix
      * domain sockets. */
+    //创建fd，接受client的连接.
     for (j = 0; j < server.ipfd_count; j++) {
         if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE,
             acceptTcpHandler,NULL) == AE_ERR)
@@ -4756,6 +4757,8 @@ int main(int argc, char **argv) {
     //senitnel_mode 哨兵模式，它能监控多个master-slave集群，发现master宕机后能进行自动切换
     server.sentinel_mode = checkForSentinelMode(argc,argv);
     initServerConfig();
+    printf("初始化serverConfig完毕。\n");
+
     ACLInit(); /* The ACL subsystem must be initialized ASAP because the
                   basic networking code and client creation depends on it. */
     moduleInitModulesSystem();
@@ -4873,6 +4876,7 @@ int main(int argc, char **argv) {
     if (background) daemonize();
 
     //初始化server
+    printf("开始初始化server...\n");
     initServer();
 
     if (background || server.pidfile) createPidFile();

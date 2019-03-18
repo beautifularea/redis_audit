@@ -845,6 +845,7 @@ void ACLInitDefaultUser(void) {
 
 /* Initialization of the ACL subsystem. */
 void ACLInit(void) {
+    printf("ACLInit\n");
     Users = raxNew();
     UsersToLoad = listCreate();
     ACLInitDefaultUser();
@@ -1614,6 +1615,7 @@ void addReplyCommandCategories(client *c, struct redisCommand *cmd) {
  *
  * When the user is omitted it means that we are trying to authenticate
  * against the default user. */
+//认证消息master
 void authCommand(client *c) {
     /* Only two or three argument forms are allowed. */
     if (c->argc > 3) {

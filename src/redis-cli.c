@@ -1119,6 +1119,8 @@ static int cliReadReply(int output_raw_strings) {
 }
 
 static int cliSendCommand(int argc, char **argv, long repeat) {
+    printf("进入到cliSendCommand方法.\n");
+
     char *command = argv[0];
     size_t *argvlen;
     int j, output_raw;
@@ -1617,6 +1619,8 @@ static char **convertToSds(int count, char** args) {
 }
 
 static int issueCommandRepeat(int argc, char **argv, long repeat) {
+    printf("issueCommandRepeat.\n");
+
     while (1) {
         config.cluster_reissue_command = 0;
         if (cliSendCommand(argc,argv,repeat) != REDIS_OK) {
@@ -1640,6 +1644,7 @@ static int issueCommandRepeat(int argc, char **argv, long repeat) {
 }
 
 static int issueCommand(int argc, char **argv) {
+    printf("issueCommand.\n");
     return issueCommandRepeat(argc, argv, config.repeat);
 }
 
@@ -1706,6 +1711,7 @@ void cliLoadPreferences(void) {
 }
 
 static void repl(void) {
+    printf("repl.\n");
     sds historyfile = NULL;
     int history = 0;
     char *line;
@@ -1736,6 +1742,7 @@ static void repl(void) {
 
     cliRefreshPrompt();
     while((line = linenoise(context ? config.prompt : "not connected> ")) != NULL) {
+        printf("linenoise.\n");
         if (line[0] != '\0') {
             long repeat = 1;
             int skipargs = 0;
@@ -1799,7 +1806,8 @@ static void repl(void) {
                     linenoiseClearScreen();
                 } else {
                     long long start_time = mstime(), elapsed;
-
+                    
+                    printf("call issueCommandRepeat 1.\n");
                     issueCommandRepeat(argc-skipargs, argv+skipargs, repeat);
 
                     /* If our debugging session ended, show the EVAL final
@@ -7770,6 +7778,8 @@ int main(int argc, char **argv) {
 
     /* Start interactive mode when no command is provided */
     if (argc == 0 && !config.eval) {
+        printf("开启交互模式。\n");
+
         /* Ignore SIGPIPE in interactive mode to force a reconnect */
         signal(SIGPIPE, SIG_IGN);
 
